@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+kubernetes = "==30.1.0"
+requests = "==2.31.0"
+schedule = "==1.2.2"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
