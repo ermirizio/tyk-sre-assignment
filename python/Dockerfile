@@ -33,6 +33,6 @@ USER appuser
 COPY . /app
 
 EXPOSE 8004
-
-CMD ["python", "main.py","-k", "~/.kube/kind-config", "--address", "localhost:8004", "--interval", "10"]
+ENTRYPOINT [ "python", "main.py" ]
+CMD ["-k", "~/.kube/kind-config", "--address", "localhost:8004", "--interval", "10"]
 

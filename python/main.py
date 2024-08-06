@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Tyk SRE Assignment",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-k", "--kubeconfig", type=str, default="",
-                        help="Path to kubeconfig, leave empty for in-cluster")
+                        help="Path to kubeconfig, leave empty for in-cluster")    
     parser.add_argument("-a", "--address", type=str, default=":8080",
                         help="HTTP server listen address")
     parser.add_argument("-i", "--interval", type=int, default=10,
