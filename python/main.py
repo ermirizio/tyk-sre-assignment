@@ -2,23 +2,21 @@ import sys
 import argparse
 import schedule
 import time
+import logging
 from kubernetes import client, config
 from threading import Thread
 from app import app
+from app.logger import logger , log_level_map
 
-def check_kubernetes_status(api_client,verbose=False):
+def check_kubernetes_status(api_client,logLevel='debug'):
+
+    level = log_level_map.get(logLevel.lower() , logging.DEBUG)
+
     try:
         version = app.get_kubernetes_version(api_client)
-        if verbose:
-            print(f"Kubernetes API server version: {version}")
+        logger.log(level,f"Kubernetes API server version: {version}")
     except Exception as e:
-        print(f"Failed to get Kubernetes version: {e}")
-
-def start_server(address):
-    try:
-        app.start_server(address)
-    except KeyboardInterrupt:
-        print("Server terminated")
+        logger.error(f"Failed to get Kubernetes version: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Tyk SRE Assignment",
@@ -37,20 +35,21 @@ if __name__ == "__main__":
         config.load_incluster_config()
 
     api_client = client.ApiClient()
-    check_kubernetes_status(api_client,True)
+    check_kubernetes_status(api_client,'info')
           
-    # Schedule the recurrent task
     schedule.every(args.interval).seconds.do(check_kubernetes_status, api_client)
 
-    # Start the HTTP server in a separate thread
-    server_thread = Thread(target=start_server, args=(args.address,))
+    server_thread = Thread(target=app.start_server, args=(args.address, api_client))
     server_thread.start()
 
-    # Main loop to run the scheduled tasks
     try:
         while True:
             schedule.run_pending()
             time.sleep(1)
     except KeyboardInterrupt:
-        print("Recurrent task terminated")
-        server_thread.join()  # Ensure the server thread is cleaned up properly
+        logger.info("Recurrent task terminated")
+        server_thread.join()
+
+
+
+
