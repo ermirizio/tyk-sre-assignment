@@ -4,9 +4,18 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: pods-list
 rules:
-- apiGroups: [""]
+- apiGroups: [""] # "" indicates the core API group
   resources: ["pods"]
-  verbs: ["list"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies"]
+  verbs: ["create", "update", "patch"]
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list"]
 
 ---
 kind: ClusterRoleBinding
